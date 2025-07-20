@@ -37,10 +37,10 @@ async function createMathGeniusAgent() {
     const agentExecutor = new AgentExecutor({
       agent,
       tools,
-      verbose: true, // 显示详细执行过程
-      maxIterations: 5, // 允许多轮推理
-      handleParsingErrors: true, // 处理解析错误
-      returnIntermediateSteps: true, // 返回中间步骤
+      verbose: true,
+      maxIterations: 5,
+      handleParsingErrors: true,
+      returnIntermediateSteps: true, 
     });
 
     return agentExecutor;
@@ -54,22 +54,13 @@ async function createMathGeniusAgent() {
   try {
     const agent = await createMathGeniusAgent();
     const result = await agent.invoke({
-      input: "how many movies belong to the 'Action' genre, could you please help me find out them?",
+      input: "Help me get all movies?",
     });
 
-    console.log(`\n🎯 结果：${result.output}\n`);
-    if (result.intermediateSteps && result.intermediateSteps.length > 0) {
-      console.log("🔍 推理过程：");
-      result.intermediateSteps.forEach((step, index) => {
-        console.log(`步骤 ${index + 1}:`);
-        console.log(`  Action: ${step.action.tool}`);
-        console.log(`  Input: ${step.action.toolInput}`);
-        console.log(`  Output: ${step.observation}`);
-      });
-    }
+    console.log(`\n🎯 Result: ${result.output}\n`);
   } catch (error) {
-    console.error("❌ 启动助手失败：", error);
+    console.error("❌ Fail", error);
   }
 })().catch((error) => {
-  console.error("❌ 启动失败：", error);
+  console.error("❌ Fail", error);
 });
