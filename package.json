@@ -1,0 +1,27 @@
+{
+  "name": "lgjs",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsx agent.ts"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.3.49",
+    "@langchain/core": "^0.3.66",
+    "@langchain/langgraph": "^0.3.10",
+    "@langchain/ollama": "^0.2.3",
+    "dotenv": "^17.2.0",
+    "js-yaml": "^4.1.0",
+    "knex": "^3.0.0",
+    "pg": "^8.11.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.3"
+  }
+}
