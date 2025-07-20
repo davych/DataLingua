@@ -10,6 +10,20 @@ A local offline database intelligent assistant based on LangGraph and Ollama, po
 - 🎬 **Movie Database** - Built-in movie database example with multiple query methods
 - 🚀 **High Performance** - DeepSeek-R1:32B model delivers excellent performance with fast and accurate responses
 
+## Example
+Question
+
+<img width="388" height="69" alt="image" src="https://github.com/user-attachments/assets/c246a53d-46e3-4798-87c1-e25a5473d2f2" />
+
+Observation
+
+<img width="986" height="169" alt="image" src="https://github.com/user-attachments/assets/ae60c64b-b8b7-4e89-acd3-75995a4e3a2f" />
+
+Result
+
+<img width="539" height="367" alt="image" src="https://github.com/user-attachments/assets/647fda79-c3e8-43ae-b0c2-83374797755d" />
+
+
 ## 🎯 Core Features
 
 ### Database Query Tools
