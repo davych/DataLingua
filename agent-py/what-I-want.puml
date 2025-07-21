@@ -1,0 +1,61 @@
+@startuml SQL Question-Answering Sequence
+
+actor User
+participant "LangGraph\nWorkflow" as Workflow
+participant "ReAct Agent" as Agent
+participant "search_proper_nouns\nTool" as SearchTool
+participant "Vector Store" as VectorStore
+participant "QuerySQL\nTool" as SQLTool
+participant "Database" as DB
+
+User -> Workflow: "Find songs by Beatls"
+activate Workflow
+
+Workflow -> Agent: Process question
+activate Agent
+
+Agent -> Agent: Reasoning:\nDetect proper noun "Beatls"
+
+Agent -> SearchTool: Search similar proper nouns
+activate SearchTool
+
+SearchTool -> VectorStore: Query embedding for "Beatls"
+activate VectorStore
+VectorStore --> SearchTool: Return "Beatles" (corrected)
+deactivate VectorStore
+
+SearchTool --> Agent: Corrected name: "Beatles"
+deactivate SearchTool
+
+Agent -> Agent: Reasoning:\nNow generate SQL query
+
+Agent -> SQLTool: Execute SQL with corrected name
+activate SQLTool
+
+SQLTool -> DB: SELECT * FROM songs\nWHERE artist = 'Beatles'
+activate DB
+DB --> SQLTool: Query results
+deactivate DB
+
+SQLTool --> Agent: Return song data
+deactivate SQLTool
+
+Agent --> Workflow: Formatted response
+deactivate Agent
+
+Workflow --> User: "Found 20 songs by Beatles:\n1. Hey Jude\n2. Let It Be..."
+deactivate Workflow
+
+note over Agent
+ReAct Pattern:
+1. Reason about input
+2. Act with tools  
+3. Observe results
+end note
+
+note over SearchTool, VectorStore
+Prevents entity mismatch
+using OllamaEmbeddings
+end note
+
+@enduml
