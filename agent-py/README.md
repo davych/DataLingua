@@ -1,3 +1,3 @@
 ## Workflow design
 
-<img width="568" height="417" alt="image" src="https://github.com/user-attachments/assets/40354b60-2683-4388-9ba2-aca758f9a6a0" />
+<img width="1129" height="743" alt="image" src="https://github.com/user-attachments/assets/981f14f7-ad3b-4aae-b0c5-cd6671fa7b5b" />
