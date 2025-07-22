@@ -1,0 +1,51 @@
+<!-- test.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SQL Agent Test</title>
+</head>
+<body>
+    <h1>SQL Agent 测试</h1>
+    
+    <input type="text" id="question" placeholder="输入问题" style="width: 400px;">
+    <button onclick="queryStream()">流式查询</button>
+    
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+
+    <script>
+
+        function queryStream() {
+            const question = document.getElementById('question').value;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+
+            fetch('http://0.0.0.0:8000/query/stream', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({question})
+            }).then(response => {
+                const reader = response.body.getReader();
+                
+                function read() {
+                    reader.read().then(({done, value}) => {
+                        if (done) return;
+                        
+                        const text = new TextDecoder().decode(value);
+                        const lines = text.split('\n');
+                        
+                        lines.forEach(line => {
+                            if (line.startsWith('data: ')) {
+                                const data = JSON.parse(line.slice(6));
+                                resultDiv.innerHTML += `<p><strong>${data.type}:</strong> ${data.content}</p>`;
+                            }
+                        });
+                        
+                        read();
+                    });
+                }
+                read();
+            });
+        }
+    </script>
+</body>
+</html>
