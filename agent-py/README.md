@@ -10,3 +10,6 @@
 This project uses SQLite with the Chinook sample database.
 
 Tool calling is supported via MFDoom/deepseek-r1-tool-calling:14b.
+
+
+// fast api @TODO
