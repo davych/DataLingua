@@ -44,9 +44,9 @@ def query_stream(request: QueryRequest):
             {"messages": [HumanMessage(content=request.question)]},
             stream_mode="values"
         ):  
+            print(step)
             if step.get("messages"):
                 last_message = step["messages"][-1]
-                last_message.pretty_print()
                 data = {
                     "type": type(last_message).__name__,
                     "content": getattr(last_message, 'content', ''),
@@ -54,8 +54,10 @@ def query_stream(request: QueryRequest):
                 
                 if hasattr(last_message, 'tool_calls') and last_message.tool_calls:
                     data["tool_calls"] = last_message.tool_calls
-                
-                yield f"data: {json.dumps(data)}\n\n"
+                # response_metadata
+                if hasattr(last_message, 'response_metadata'):
+                    data["response_metadata"] = last_message.response_metadata
+                yield f"{json.dumps(data)}"
     
     return StreamingResponse(
         generate(),
