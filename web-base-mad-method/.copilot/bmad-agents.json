@@ -1,0 +1,74 @@
+{
+  "agents": {
+    "analyst": {
+      "file": "bmad-core/agents/analyst.md",
+      "name": "Analyst",
+      "description": "市场研究和竞品分析专家",
+      "context": ["docs/prd.md", "docs/architecture.md"],
+      "focus": "market research, competitor analysis, user research"
+    },
+    "architect": {
+      "file": "bmad-core/agents/architect.md",
+      "name": "Architect", 
+      "description": "系统架构设计专家",
+      "context": ["docs/architecture.md", "docs/prd.md"],
+      "focus": "system architecture, tech stack, API design"
+    },
+    "bmad-master": {
+      "file": "bmad-core/agents/bmad-master.md",
+      "name": "BMad Master",
+      "description": "万能任务执行器",
+      "context": ["bmad-core/"],
+      "focus": "any BMad task execution"
+    },
+    "bmad-orchestrator": {
+      "file": "bmad-core/agents/bmad-orchestrator.md",
+      "name": "BMad Orchestrator",
+      "description": "协调器",
+      "context": ["bmad-core/agents/"],
+      "focus": "agent coordination and workflow management"
+    },
+    "dev": {
+      "file": "bmad-core/agents/dev.md",
+      "name": "James",
+      "description": "全栈开发专家",
+      "context": ["src/", "docs/stories/", "docs/architecture/"],
+      "focus": "code implementation, testing, optimization"
+    },
+    "pm": {
+      "file": "bmad-core/agents/pm.md",
+      "name": "John",
+      "description": "产品经理",
+      "context": ["docs/prd.md", "docs/architecture.md"],
+      "focus": "PRD creation, requirement management, product planning"
+    },
+    "po": {
+      "file": "bmad-core/agents/po.md",
+      "name": "Sarah",
+      "description": "产品负责人",
+      "context": ["docs/prd/", "docs/stories/"],
+      "focus": "product management, document sharding, story validation"
+    },
+    "qa": {
+      "file": "bmad-core/agents/qa.md",
+      "name": "Quinn",
+      "description": "高级开发者和QA架构师",
+      "context": ["src/", "tests/", "docs/stories/"],
+      "focus": "code review, refactoring, quality assurance"
+    },
+    "sm": {
+      "file": "bmad-core/agents/sm.md",
+      "name": "Bob",
+      "description": "Scrum Master",
+      "context": ["docs/prd/", "docs/stories/"],
+      "focus": "story creation, process management, agile guidance"
+    },
+    "ux-expert": {
+      "file": "bmad-core/agents/ux-expert.md",
+      "name": "UX Expert",
+      "description": "用户体验专家",
+      "context": ["docs/architecture.md", "src/"],
+      "focus": "UI design, UX optimization, frontend specifications"
+    }
+  }
+}
