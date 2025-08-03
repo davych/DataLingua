@@ -4,14 +4,7 @@ LangGraph Workflow 主流程实现：严格遵循 langgraph StateGraph/add_node/
 """
 from typing import Any, Dict, TypedDict
 from langgraph.graph import StateGraph, END
-
-class State(TypedDict):
-    user_query: str
-    nlu_result: Dict[str, Any]
-    sql: str
-    result: Any
-    status: str
-    error: str
+from state import State
 
 class Workflow:
     def __init__(self, nlu_agent, sqlcoder_agent, db_service):
@@ -32,10 +25,12 @@ class Workflow:
         return g.compile()
 
     def _nlu_step(self, state: State, config=None) -> State:
-        # nlu_agent 必须是 langgraph agent（如 create_react_agent 返回值）
-        return self.nlu_agent(state)
+        # nlu_agent 是 CompiledStateGraph，需要用 invoke 调用
+        result = self.nlu_agent(state)
+        return result
 
     def _sqlcoder_step(self, state: State, config=None) -> State:
+        # sqlcoder_agent 是普通 callable，直接调用
         return self.sqlcoder_agent(state)
 
     def _db_step(self, state: State, config=None) -> State:
@@ -60,4 +55,4 @@ class Workflow:
             'error': ''
         }
 
-        return self.graph.invoke(state, config=None)
+        return self.graph.invoke(state)

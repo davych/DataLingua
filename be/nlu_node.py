@@ -2,25 +2,39 @@
 """
 NLU 节点实现：基于 langgraph.agents.create_react_agent 创建 ReAct agent。
 """
+import json
 from typing import Dict, Any
+from nlu_prompt import system_prompt
 
-from langgraph.prebuilt import create_react_agent
+
+from langchain_core.messages import HumanMessage, SystemMessage
+
+class NLUAgent:
+    """
+    官方推荐结构：声明 NLU agent 类，兼容 langgraph StateGraph。
+    """
+    def __init__(self, llm):
+        self.llm = llm
+
+    def __call__(self, state):
+        # 将 state 映射为消息列表
+        user_query = state.get("user_query", "")
+        # 调用 LLM
+        messages = [
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_query)
+        ]
+        response = self.llm.invoke(messages)
+        content = response.content if hasattr(response, 'content') else response
+        # json dump
+        parsed_content =  json.loads(content) if isinstance(content, str) else content
+        print("LLM 返回:", parsed_content)
+        state['nlu_result'] = parsed_content
+        # 你可以在这里做更复杂的解析/结构化
+        return state
 
 def build_nlu_react_agent(llm, tools=None):
     """
-    创建一个基于 LLM 的 ReAct NLU agent。
-    llm: 支持 function/tool calling 的大模型实例
-    tools: 可选，外部工具列表（如澄清、实体补全等）
+    返回自定义 NLUAgent 实例，兼容 langgraph。
     """
-    system_prompt = (
-        "你是一个专业的数据库自然语言接口。你的任务是分析用户的查询请求，并从中提取意图和关键实体。\n"
-        "可识别的意图包括: query_data。\n"
-        "你需要提取以下实体: metrics, dimensions, time_range, filters。\n"
-        "如果缺少执行查询所必需的实体，请在 missing_entities 字段中注明，并生成 clarification_question。\n"
-        "请以JSON格式返回结果。"
-    )
-    return create_react_agent(
-        model=llm,
-        tools=tools or [],
-        system_prompt=system_prompt
-    )
+    return NLUAgent(llm)

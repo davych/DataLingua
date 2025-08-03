@@ -4,6 +4,7 @@
 SQLCoder Agent 节点实现：标准 Python callable，兼容 LangGraph/StateGraph add_node。
 """
 from typing import Dict, Any
+from state import State
 
 class SQLCoderAgent:
     def __init__(self, model_client, db_schema: str):
@@ -14,7 +15,7 @@ class SQLCoderAgent:
         self.model_client = model_client
         self.db_schema = db_schema
 
-    def __call__(self, state: Dict[str, Any]) -> Dict[str, Any]:
+    def __call__(self, state: State) -> State:
         nlu_result = state.get('nlu_result', {})
         entities = nlu_result.get('entities', {})
         prompt = f"""### Task\nGenerate a SQL query based on the natural language question and database schema.\n\n### Database Schema\n{self.db_schema}\n\n### Extracted Information\n- Metrics: {entities.get('metrics', [])}\n- Dimensions: {entities.get('dimensions', [])}\n- Time Range: {entities.get('time_range', 'N/A')}\n- Filters: {entities.get('filters', [])}\n\n### Requirements\n- Generate only SELECT statements\n- Use proper table joins if needed\n- Apply time filters based on time_range\n- Group by dimensions if specified\n- Aggregate metrics appropriately\n\n### SQL Query\nSELECT"""
