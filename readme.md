@@ -1,4 +1,8 @@
-## MVP
+## 架构文档
+[架构设计文档](./docs/architecture.md)
+
+
+## MVP diagram
 
 ```mermaid
 graph TD
