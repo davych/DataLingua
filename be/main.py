@@ -2,7 +2,7 @@
 主入口：演示如何初始化 NLU/SQLCoder agent 和 Workflow，并运行一次完整流程。
 """
 from nlu_node import build_nlu_react_agent
-from sqlcoder_agent import build_sqlcoder_agent
+from be.sqlcoder_node import SQLCoderAgent
 from db_service import DBService
 from workflow import Workflow
 
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     # 初始化 agent
     llm = MockLLM()
     nlu_agent = build_nlu_react_agent(llm)
-    sqlcoder_agent = build_sqlcoder_agent(MockSQLCoder(), db_schema="sales_table schema ...")
+    sqlcoder_agent = SQLCoderAgent(MockSQLCoder(), db_schema="sales_table schema ...")
     db_service = DBService(db_path=":memory:")  # 用内存数据库演示
 
     # 初始化 workflow

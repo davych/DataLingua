@@ -2,8 +2,16 @@
 """
 LangGraph Workflow 主流程实现：严格遵循 langgraph StateGraph/add_node/add_edge/set_entry。
 """
-from typing import Any, Dict
+from typing import Any, Dict, TypedDict
 from langgraph.graph import StateGraph, END
+
+class State(TypedDict):
+    user_query: str
+    nlu_result: Dict[str, Any]
+    sql: str
+    result: Any
+    status: str
+    error: str
 
 class Workflow:
     def __init__(self, nlu_agent, sqlcoder_agent, db_service):
@@ -13,24 +21,24 @@ class Workflow:
         self.graph = self._build_graph()
 
     def _build_graph(self):
-        g = StateGraph()
+        g = StateGraph(State)
         g.add_node('nlu', self._nlu_step)
         g.add_node('sqlcoder', self._sqlcoder_step)
         g.add_node('db', self._db_step)
         g.add_edge('nlu', 'sqlcoder')
         g.add_edge('sqlcoder', 'db')
         g.add_edge('db', END)
-        g.set_entry('nlu')
-        return g
+        g.set_entry_point('nlu')
+        return g.compile()
 
-    def _nlu_step(self, state: Dict[str, Any]) -> Dict[str, Any]:
+    def _nlu_step(self, state: State, config=None) -> State:
         # nlu_agent 必须是 langgraph agent（如 create_react_agent 返回值）
         return self.nlu_agent(state)
 
-    def _sqlcoder_step(self, state: Dict[str, Any]) -> Dict[str, Any]:
+    def _sqlcoder_step(self, state: State, config=None) -> State:
         return self.sqlcoder_agent(state)
 
-    def _db_step(self, state: Dict[str, Any]) -> Dict[str, Any]:
+    def _db_step(self, state: State, config=None) -> State:
         sql = state.get('sql')
         try:
             result = self.db_service.query(sql)
@@ -43,5 +51,13 @@ class Workflow:
         return state
 
     def run(self, user_query: str) -> Dict[str, Any]:
-        state = {'user_query': user_query}
-        return self.graph.run(state)
+        state: State = {
+            'user_query': user_query,
+            'nlu_result': {},
+            'sql': '',
+            'result': None,
+            'status': '',
+            'error': ''
+        }
+
+        return self.graph.invoke(state, config=None)
