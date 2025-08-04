@@ -1,12 +1,9 @@
-"""
-主入口：演示如何初始化 NLU/SQLCoder agent 和 Workflow，并运行一次完整流程。
-"""
-from nlu_node import NLUAgent
-from sqlcoder_node import SQLCoderAgent
-from db_service import DBService
+from nlu.nlu_node import NLUAgent
+from sqlcoder.sqlcoder_node import SQLCoderAgent
+from db.db_service import DBService
 from workflow import Workflow
-from state import State
-from llm_client import llm
+from nlu.llm_client import llm
+from sqlcoder.llm_sqlcoder import SqlCoderLLM
 
 
 class MockSQLCoder:
@@ -15,12 +12,14 @@ class MockSQLCoder:
 
 if __name__ == "__main__":
     nlu_agent = NLUAgent(llm)
-    sqlcoder_agent = SQLCoderAgent(MockSQLCoder(), db_schema="sales_table schema ...")
+    sqlcoder_llm = SqlCoderLLM()
+    sqlcoder_agent = SQLCoderAgent(sqlcoder_llm)
     db_service = DBService(db_path=":memory:")  # 用内存数据库演示
 
     workflow = Workflow(nlu_agent, sqlcoder_agent, db_service)
 
-    user_query = "2023年各区域销售额"
+    user_query = "I'd like to see a summary of album-artist distribution"
+    import json
     result = workflow.run(user_query)
     print("=== Workflow Result ===")
-    print(result)
+    print(result,json.dumps(result, indent=2, ensure_ascii=False))

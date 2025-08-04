@@ -1,7 +1,4 @@
 
-"""
-LangGraph Workflow 主流程实现：严格遵循 langgraph StateGraph/add_node/add_edge/set_entry。
-"""
 from typing import Any, Dict, TypedDict
 from langgraph.graph import StateGraph, END
 from state import State
@@ -25,12 +22,10 @@ class Workflow:
         return g.compile()
 
     def _nlu_step(self, state: State, config=None) -> State:
-        # nlu_agent 是 CompiledStateGraph，需要用 invoke 调用
         result = self.nlu_agent(state)
         return result
 
     def _sqlcoder_step(self, state: State, config=None) -> State:
-        # sqlcoder_agent 是普通 callable，直接调用
         return self.sqlcoder_agent(state)
 
     def _db_step(self, state: State, config=None) -> State:
