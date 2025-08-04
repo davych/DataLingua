@@ -49,5 +49,4 @@ class Workflow:
             'status': '',
             'error': ''
         }
-
         return self.graph.invoke(state)

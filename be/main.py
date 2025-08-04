@@ -18,9 +18,15 @@ if __name__ == "__main__":
 
     workflow = Workflow(nlu_agent, sqlcoder_agent, db_service)
 
-    user_query = "我想看每个分类下有多少歌曲.我需要分类名称以及歌曲数量"
-    result = workflow.run(user_query)
-    print("=== Workflow Result ===")
-    print('user_query -', user_query)
-    print('translated -', result.get('nlu_result', ''))
-    print('sql -', result.get('sql', ''))
+    # Save the graph as a PNG file and display it
+    graph = workflow.graph.get_graph()
+    img =  graph.draw_mermaid_png()
+    with open("workflow_graph.png", "wb") as f:
+        f.write(img)
+
+    # user_query = "我想看每个分类下有多少歌曲.我需要分类名称以及歌曲数量"
+    # result = workflow.run(user_query)
+    # print("=== Workflow Result ===")
+    # print('user_query -', user_query)
+    # print('translated -', result.get('nlu_result', ''))
+    # print('sql -', result.get('sql', ''))

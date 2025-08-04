@@ -1,6 +1,9 @@
 ## 架构文档
 [架构设计文档](./docs/architecture.md)
 
+## Workflow graph
+![Workflow Graph](./workflow_graph.png)
+
 
 ## MVP diagram
 
