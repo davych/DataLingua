@@ -1,10 +1,13 @@
-from typing import Any, Dict, TypedDict
+from typing import Any, Dict, List, Optional, TypedDict, Union
 from langgraph.graph import  END
 
-class State(TypedDict):
-    user_query: str
-    nlu_result: str
+from langchain_core.messages import BaseMessage
+class State(TypedDict, total=False):
+    user_query: List[BaseMessage]
+    nlu_result: Dict[str, Any]
     sql: str
     result: Any
     status: str
     error: str
+    needs_clarification: bool
+    follow_up_question: Optional[str]
