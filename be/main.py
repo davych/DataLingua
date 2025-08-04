@@ -6,7 +6,7 @@ from sqlcoder_node import SQLCoderAgent
 from db_service import DBService
 from workflow import Workflow
 from state import State
-from llmClient import llm
+from llm_client import llm
 
 
 class MockSQLCoder:
@@ -14,15 +14,12 @@ class MockSQLCoder:
         return "SELECT region, SUM(sales) FROM sales_table WHERE year=2023 GROUP BY region;"
 
 if __name__ == "__main__":
-    # 初始化 agent
     nlu_agent = NLUAgent(llm)
     sqlcoder_agent = SQLCoderAgent(MockSQLCoder(), db_schema="sales_table schema ...")
     db_service = DBService(db_path=":memory:")  # 用内存数据库演示
 
-    # 初始化 workflow
     workflow = Workflow(nlu_agent, sqlcoder_agent, db_service)
 
-    # 用户输入
     user_query = "2023年各区域销售额"
     result = workflow.run(user_query)
     print("=== Workflow Result ===")

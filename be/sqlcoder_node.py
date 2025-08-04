@@ -20,5 +20,6 @@ class SQLCoderAgent:
         entities = nlu_result.get('entities', {})
         prompt = f"""### Task\nGenerate a SQL query based on the natural language question and database schema.\n\n### Database Schema\n{self.db_schema}\n\n### Extracted Information\n- Metrics: {entities.get('metrics', [])}\n- Dimensions: {entities.get('dimensions', [])}\n- Time Range: {entities.get('time_range', 'N/A')}\n- Filters: {entities.get('filters', [])}\n\n### Requirements\n- Generate only SELECT statements\n- Use proper table joins if needed\n- Apply time filters based on time_range\n- Group by dimensions if specified\n- Aggregate metrics appropriately\n\n### SQL Query\nSELECT"""
         sql = self.model_client.generate_sql(prompt)
+        print(f"Generated SQL: {sql}")  # Debug output
         state['sql'] = sql
         return state
