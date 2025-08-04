@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     workflow = Workflow(nlu_agent, sqlcoder_agent, db_service)
 
-    user_query = "I'd like to see a summary of album-artist distribution"
+    user_query = "I want to see the distribution of albums per artist."
     import json
     result = workflow.run(user_query)
     print("=== Workflow Result ===")

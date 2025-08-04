@@ -16,19 +16,24 @@ class SQLCoderAgent:
         entities = nlu_result.get('entities', {})
         user_query = state.get('user_query', '')
         info_lines = []
-        if entities.get('metrics'):
-            info_lines.append(f"Metrics: {entities.get('metrics')}")
-        if entities.get('dimensions'):
-            info_lines.append(f"Dimensions: {entities.get('dimensions')}")
+        metrics = entities.get('metrics')
+        dimensions = entities.get('dimensions')
+        # 优化自然语言提示，支持多个 metrics/dimensions
+        metrics_str = ', '.join(metrics) if metrics else ''
+        dimensions_str = ', '.join(dimensions) if dimensions else ''
+        if metrics and dimensions:
+            info_lines.append(f"Please help to {metrics_str} around different {dimensions_str}.")
+        elif metrics:
+            info_lines.append(f"Please help to {metrics_str}.")
+        elif dimensions:
+            info_lines.append(f"Please focus on different {dimensions_str} .")
         if entities.get('time_range'):
             info_lines.append(f"Time Range: {entities.get('time_range')}")
         if entities.get('filters'):
             info_lines.append(f"Filters: {entities.get('filters')}")
         info_str = '\n'.join(info_lines)
-        q = f"""{user_query} belows are my information:
-            {info_str}
-            """
+        q = f"""{user_query}\n{info_str}\n"""
         print(f"SQLCoder prompt: {q}")  # Debugging output
-        result = self.model_client.generate_sql(q)
+        result = self.model_client.generate_sql(user_query)
         state['sql'] = result
         return state
