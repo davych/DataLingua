@@ -3,7 +3,7 @@ from langgraph.graph import  END
 
 class State(TypedDict):
     user_query: str
-    nlu_result: Dict[str, Any]
+    nlu_result: str
     sql: str
     result: Any
     status: str

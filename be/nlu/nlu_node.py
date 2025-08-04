@@ -3,6 +3,7 @@ import json
 import os
 from langchain_core.messages import HumanMessage, SystemMessage
 
+# @todo @davych 未来是需要reasoning的，针对无法进行sql，或者没有参考纬度的询问，则nlu节点就需要额外的human in loop操作
 class NLUAgent:
     def __init__(self, llm):
         base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -26,6 +27,5 @@ class NLUAgent:
         ]
         response = self.llm.invoke(messages)
         content = response.content if hasattr(response, 'content') else response
-        parsed_content =  json.loads(content) if isinstance(content, str) else content
-        state['nlu_result'] = parsed_content
+        state['nlu_result'] = content
         return state

@@ -18,8 +18,9 @@ if __name__ == "__main__":
 
     workflow = Workflow(nlu_agent, sqlcoder_agent, db_service)
 
-    user_query = "I want to see the distribution of albums per artist."
-    import json
+    user_query = "我想看每个分类下有多少歌曲.我需要分类名称以及歌曲数量"
     result = workflow.run(user_query)
     print("=== Workflow Result ===")
-    print(result,json.dumps(result, indent=2, ensure_ascii=False))
+    print('user_query -', user_query)
+    print('translated -', result.get('nlu_result', ''))
+    print('sql -', result.get('sql', ''))

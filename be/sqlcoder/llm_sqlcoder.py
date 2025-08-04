@@ -32,5 +32,4 @@ class SqlCoderLLM:
             sql_str = str(sql_content)
         sql_str = sql_str.replace('<s>', '').strip()
         sql_str = sql_str.replace(';', '').strip()
-        print(f"Final SQL: {sql_str}")  # Final output for debugging
         return sql_str

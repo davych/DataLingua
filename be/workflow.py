@@ -43,7 +43,7 @@ class Workflow:
     def run(self, user_query: str) -> Dict[str, Any]:
         state: State = {
             'user_query': user_query,
-            'nlu_result': {},
+            'nlu_result': '',
             'sql': '',
             'result': None,
             'status': '',
