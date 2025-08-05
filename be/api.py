@@ -38,6 +38,7 @@ class QARequest(BaseModel):
 
 @app.post("/qa")
 def qa_endpoint(req: QARequest):
+    print(f"Received request: {req}")
     # 1. conversation_id 生成/复用（仅用于header，后端不再管理上下文）
     if req.conversation_id:
         conversation_id = req.conversation_id
@@ -47,7 +48,8 @@ def qa_endpoint(req: QARequest):
     nlu_agent = NLUAgent(llm)
     sqlcoder_llm = SqlCoderLLM()
     sqlcoder_agent = SQLCoderAgent(sqlcoder_llm)
-    db_service = DBService(db_path=":memory:")
+    # db_service = DBService(db_path=":memory:")
+    db_service = DBService(db_path="Chinook.db")
     workflow = Workflow(nlu_agent, sqlcoder_agent, db_service)
     service = DataLinguaService(workflow)
 
