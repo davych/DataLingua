@@ -28,27 +28,24 @@ sid_conversation_map: Dict[str, list] = {}
 # conversation_id -> context (可扩展为上下文对象)
 conversation_context: Dict[str, dict] = {}
 
-
 class QARequest(BaseModel):
-    sid: str
     query: list[str]  # 消息历史，字符串数组
-    conversation_id: Optional[str] = None
+    conversation_id: str  # 必须由前端生成并传入
 
 
+from fastapi import Cookie
 
 @app.post("/qa")
-def qa_endpoint(req: QARequest):
-    print(f"Received request: {req}")
-    # 1. conversation_id 生成/复用（仅用于header，后端不再管理上下文）
-    if req.conversation_id:
-        conversation_id = req.conversation_id
-    else:
-        conversation_id = str(uuid.uuid4())
-    # 2. 每次新建 workflow
+def qa_endpoint(req: QARequest, sid: Optional[str] = Cookie(None)):
+    # sid从cookie读取，conversation_id由前端传入
+    conversation_id = req.conversation_id
+    # 记录sid->conversation_id映射
+    if sid:
+        sid_conversation_map.setdefault(sid, []).append(conversation_id)
+    # 每次新建 workflow
     nlu_agent = NLUAgent(llm)
     sqlcoder_llm = SqlCoderLLM()
     sqlcoder_agent = SQLCoderAgent(sqlcoder_llm)
-    # db_service = DBService(db_path=":memory:")
     db_service = DBService(db_path="Chinook.db")
     workflow = Workflow(nlu_agent, sqlcoder_agent, db_service)
     service = DataLinguaService(workflow)
@@ -65,8 +62,7 @@ def qa_endpoint(req: QARequest):
             "needs_clarification": True,
             "follow_up": result.get('follow_up'),
             "nlu_result": result.get('nlu_result')
-        }, headers=headers) 
-        
+        }, headers=headers)
     def gen():
         yield str(result)
     return StreamingResponse(gen(), media_type="text/plain", headers=headers)
