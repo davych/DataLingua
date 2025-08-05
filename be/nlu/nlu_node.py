@@ -23,6 +23,10 @@ class NLUAgent:
     
     def __call__(self, state):
         user_query = state.get("user_query", [])
+        # 类型检查，必须为List[BaseMessage]
+        from langchain_core.messages import BaseMessage
+        if not (isinstance(user_query, list) and all(isinstance(m, BaseMessage) for m in user_query)):
+            raise ValueError("user_query must be a list of BaseMessage, got: {}".format(user_query))
         systemMsg = [SystemMessage(content=self.generate_prompt())]
         history_strs = []
         for idx, msg in enumerate(user_query):
@@ -47,11 +51,9 @@ class NLUAgent:
                 "follow_up_question": None,
                 "related_tables": []
             }
-        
         # Update state with parsed result
         state['nlu_result'] = nlu_result
         state['needs_clarification'] = not nlu_result['complete']
         if nlu_result['follow_up_question']:
             state['follow_up_question'] = nlu_result['follow_up_question']
-        
         return state

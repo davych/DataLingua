@@ -4,6 +4,10 @@
 ## Workflow graph
 ![Workflow Graph](./workflow_graph.png)
 
+## case demo
+![询问1](./api_q1.png)
+![询问澄清与结果](./api_q2.png)
+！[db_result](./db_result.png)
 
 ## MVP diagram
 
