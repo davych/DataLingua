@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Input, Button, Typography, Avatar, List, } from 'antd';
 import { SendOutlined, PlusOutlined, MessageOutlined } from '@ant-design/icons';
-
+import http from '../http';
+import { AiMessage } from '../components/AiMessage';
 const { Text } = Typography;
 
 interface Message {
@@ -19,14 +20,7 @@ interface ChatSession {
 }
 
 const ChatInterface: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      content: '有什么可以帮你的吗',
-      isUser: false,
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -35,7 +29,7 @@ const ChatInterface: React.FC = () => {
     {
       id: '1',
       title: '新的对话',
-      lastMessage: 'gpt-4-1-mini',
+      lastMessage: '',
       timestamp: '3 小时前'
     }
   ]);
@@ -58,21 +52,38 @@ const ChatInterface: React.FC = () => {
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const nextMessages = [...messages, userMessage];
+    setMessages(nextMessages);
     setInputValue('');
     setIsLoading(true);
 
-    // 模拟AI回复
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: '这是一个模拟的AI回复。我理解了您的问题，让我来帮助您解决。',
+    // 只收集human消息内容组成query数组
+    const queryArr = nextMessages.filter(m => m.isUser).map(m => m.content);
+    // conversation_id可用当前会话id或自定义
+    const conversation_id = '1';
+    try {
+      const res = await http.post('/qa', {
+        conversation_id,
+        query: queryArr
+      });
+      // AI回复
+      const aiContent = JSON.stringify(res.data);
+      setMessages(prev => [...prev, {
+        id: Date.now().toString() + '-ai',
+        content: aiContent,
         isUser: false,
         timestamp: new Date()
-      };
-      setMessages(prev => [...prev, aiMessage]);
+      }]);
+    } catch (error) {
+      setMessages(prev => [...prev, {
+        id: Date.now().toString() + '-ai',
+        content: 'AI接口请求失败',
+        isUser: false,
+        timestamp: new Date()
+      }]);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -83,14 +94,7 @@ const ChatInterface: React.FC = () => {
   };
 
   const handleNewChat = () => {
-    setMessages([
-      {
-        id: '1',
-        content: '有什么可以帮你的吗',
-        isUser: false,
-        timestamp: new Date()
-      }
-    ]);
+    setMessages([]);
     
     // 添加新的对话会话
     const newSession: ChatSession = {
@@ -171,40 +175,24 @@ const ChatInterface: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-4 bg-gray-900">
           <div className="max-w-4xl mx-auto space-y-4">
             {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex gap-3 ${message.isUser ? 'justify-end' : 'justify-start'}`}
-              >
-                {!message.isUser && (
-                  <Avatar 
-                    size={32} 
-                    className="bg-blue-500 flex items-center justify-center flex-shrink-0"
-                  >
-                    <MessageOutlined className="text-white" />
-                  </Avatar>
-                )}
-                
+              message.isUser ? (
                 <div
-                  className={`max-w-2xl px-4 py-3 rounded-lg ${
-                    message.isUser
-                      ? 'bg-blue-600 text-white ml-12'
-                      : 'bg-gray-700 text-gray-100 mr-12'
-                  }`}
+                  key={message.id}
+                  className="flex gap-3 justify-end"
                 >
-                  <Text className={message.isUser ? '!text-white' : '!text-gray-100'}>
-                    {message.content}
-                  </Text>
-                </div>
-
-                {message.isUser && (
+                  <div className="max-w-2xl px-4 py-3 rounded-lg !bg-blue-600 !text-white ml-12">
+                    <Text className="!text-white">{message.content}</Text>
+                  </div>
                   <Avatar 
                     size={32} 
-                    className="bg-green-500 flex items-center justify-center flex-shrink-0"
+                    className="!bg-green-500 flex items-center justify-center flex-shrink-0"
                   >
                     U
                   </Avatar>
-                )}
-              </div>
+                </div>
+              ) : (
+                <AiMessage key={message.id} content={message.content} />
+              )
             ))}
             
             {isLoading && (

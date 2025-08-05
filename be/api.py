@@ -56,16 +56,23 @@ def qa_endpoint(req: QARequest, sid: Optional[str] = Cookie(None)):
 
     print(f"Result: {result}")
 
-    if isinstance(result, dict) and result.get('needs_clarification'):
-        return JSONResponse(content={
+    # if isinstance(result, dict) and result.get('needs_clarification'):
+    #     return JSONResponse(content={
+    #         "conversation_id": conversation_id,
+    #         "needs_clarification": True,
+    #         "follow_up": result.get('follow_up'),
+    #         "nlu_result": result.get('nlu_result')
+    #     })
+    return JSONResponse(content={
             "conversation_id": conversation_id,
-            "needs_clarification": True,
+            "needs_clarification": result.get('needs_clarification', False),
+            "context": [msg.content for msg in result.get('user_query', [])],
+            "result": result.get('result'),
+            "status": result.get('status', ''),
+            "error": result.get('error', ''),
             "follow_up": result.get('follow_up'),
             "nlu_result": result.get('nlu_result')
-        }, headers=headers)
-    def gen():
-        yield str(result)
-    return StreamingResponse(gen(), media_type="text/plain", headers=headers)
+        })
 
 @app.get("/conversation_ids/{sid}")
 def get_conversation_ids(sid: str):
