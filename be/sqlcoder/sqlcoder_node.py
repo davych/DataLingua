@@ -1,6 +1,7 @@
 
 
 from typing import Dict, Any
+
 from state import State
 
 class SQLCoderAgent:
@@ -18,5 +19,6 @@ class SQLCoderAgent:
         print(f"Generating SQL for query: {query}")
         result = self.model_client.generate_sql(query)
         print(f"Generated SQL: {result}")
+
         state['sql'] = result
         return state

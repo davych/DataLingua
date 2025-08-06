@@ -12,6 +12,7 @@ Generate a SQL query to answer [QUESTION]{user_question}[/QUESTION]
 - If you use COUNT(*), your answer will be considered invalid. Always use COUNT(specific_field_name) and explain your choice if possible.
 - If you cannot answer the question with the available database schema, return 'I do not know'
 - Follow all Critical SQL Rules above strictly
+- Only output the SQL query, do not include any explanations or additional text.
 
 ### Database Schema
 The query will run on a database with the following schema:

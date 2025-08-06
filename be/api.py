@@ -8,7 +8,7 @@ from nlu.nlu_node import NLUAgent
 from sqlcoder.sqlcoder_node import SQLCoderAgent
 from db.db_service import DBService
 from workflow import Workflow
-from nlu.llm_client import llm
+from nlu.llm_azure import model
 from sqlcoder.llm_sqlcoder import SqlCoderLLM
 from service import DataLinguaService
 
@@ -43,7 +43,7 @@ def qa_endpoint(req: QARequest, sid: Optional[str] = Cookie(None)):
     if sid:
         sid_conversation_map.setdefault(sid, []).append(conversation_id)
     # 每次新建 workflow
-    nlu_agent = NLUAgent(llm)
+    nlu_agent = NLUAgent(model)
     sqlcoder_llm = SqlCoderLLM()
     sqlcoder_agent = SQLCoderAgent(sqlcoder_llm)
     db_service = DBService(db_path="Chinook.db")

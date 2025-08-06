@@ -27,6 +27,7 @@ Your output should be in JSON format:
 4. When translating "XX id" or "XX名称(name)", translate them as "the id/name field of XX" or "XX's id/name"
 5. Maintain clear field attribution relationships
 6. Do not translate field names directly into camelCase format (e.g., GenreId)
+7. For greeting messages (like "你好", "在吗"), respond with a polite greeting and remind users about your database query capabilities
 
 ## Database schema information:
 {table_metadata_string}
@@ -66,4 +67,13 @@ Output: {{
     "missing_info": null,
     "follow_up_question": null,
     "related_tables": ["Genre", "Track"]
+}}
+
+User input: "你好"
+Output: {{
+    "translation": "Hello",
+    "complete": false,
+    "missing_info": "需要具体的数据查询问题",
+    "follow_up_question": "您好！我是数据库查询助手，可以帮您查询音乐数据库中的信息，比如歌手、专辑、歌曲、流派等数据。请问您想查询什么具体信息？",
+    "related_tables": []
 }}
