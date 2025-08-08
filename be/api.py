@@ -9,6 +9,7 @@ from sqlcoder.sqlcoder_node import SQLCoderAgent
 from db.db_service import DBService
 from workflow import Workflow
 from nlu.llm_azure import model
+from nlu.llm_client import llm
 from sqlcoder.llm_sqlcoder import SqlCoderLLM
 from service import DataLinguaService
 
@@ -35,15 +36,15 @@ class QARequest(BaseModel):
 
 from fastapi import Cookie
 
-@app.post("/qa")
-def qa_endpoint(req: QARequest, sid: Optional[str] = Cookie(None)):
+@app.post("/qa/{model_name}")
+def qa_endpoint(req: QARequest, sid: Optional[str] = Cookie(None), model_name: str = "client"):
     # sid从cookie读取，conversation_id由前端传入
     conversation_id = req.conversation_id
     # 记录sid->conversation_id映射
     if sid:
         sid_conversation_map.setdefault(sid, []).append(conversation_id)
     # 每次新建 workflow
-    nlu_agent = NLUAgent(model)
+    nlu_agent = NLUAgent(model if model_name == 'remote' else llm)
     sqlcoder_llm = SqlCoderLLM()
     sqlcoder_agent = SQLCoderAgent(sqlcoder_llm)
     db_service = DBService(db_path="Chinook.db")
