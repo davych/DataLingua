@@ -12,6 +12,7 @@ from nlu.llm_azure import model
 from nlu.llm_client import llm
 from sqlcoder.llm_sqlcoder import SqlCoderLLM
 from service import DataLinguaService
+from langchain_ollama import ChatOllama
 
 app = FastAPI()
 
@@ -23,6 +24,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+client_sqlcoder_version = "sqlcoder:15b"
 
 # sid -> [conversation_id1, conversation_id2, ...]
 sid_conversation_map: Dict[str, list] = {}
@@ -38,14 +41,15 @@ from fastapi import Cookie
 
 @app.post("/qa/{model_name}")
 def qa_endpoint(req: QARequest, sid: Optional[str] = Cookie(None), model_name: str = "client"):
+    print(f"QA Endpoint Called with model_name: {model_name}")
     # sid从cookie读取，conversation_id由前端传入
     conversation_id = req.conversation_id
     # 记录sid->conversation_id映射
     if sid:
         sid_conversation_map.setdefault(sid, []).append(conversation_id)
     # 每次新建 workflow
-    nlu_agent = NLUAgent(model if model_name == 'remote' else llm)
-    sqlcoder_llm = SqlCoderLLM()
+    nlu_agent = NLUAgent(model if model_name == 'remote' else llm)  
+    sqlcoder_llm = SqlCoderLLM(model if model_name == 'remote' else ChatOllama(model=client_sqlcoder_version, temperature=0.1))
     sqlcoder_agent = SQLCoderAgent(sqlcoder_llm)
     db_service = DBService(db_path="Chinook.db")
     workflow = Workflow(nlu_agent, sqlcoder_agent, db_service)

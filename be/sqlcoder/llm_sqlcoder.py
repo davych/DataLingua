@@ -1,16 +1,14 @@
 
 import os
-from langchain_ollama import ChatOllama
-from sqlcoder.llm_azure import model
+
 
 class SqlCoderLLM:
     import os
-    def __init__(self, model_name="sqlcoder:15b"):
+    def __init__(self, model):
         base_dir = os.path.dirname(os.path.abspath(__file__))
         self.prompt_file = os.path.join(base_dir, "prompt_sql.md")
         self.metadata_file = os.path.join(os.path.dirname(base_dir), "db", "metadata.sql")
-        self.llm = model # ChatOllama(model=model_name, temperature=0.1)
-
+        self.llm = model
 
     def generate_prompt(self, question):
         with open(self.prompt_file, "r") as f:
